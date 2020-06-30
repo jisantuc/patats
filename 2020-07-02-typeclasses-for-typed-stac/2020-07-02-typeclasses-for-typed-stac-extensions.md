@@ -116,6 +116,26 @@ File "/.../src/types.py", line 51, in <module>: Function funcOnAtLeastAB was cal
 > - why isn't `FancyItem` an `ItemWithAB`?
 > - I don't know!
 
+## Was it the type bounds?
+
+> - no
+
+```python
+def funcOnExactlyAB(item: ItemWithAB) -> None:
+    return
+
+funcOnExactlyAB(ItemWithAB())
+funcOnExactlyAB(FancyItem())
+```
+
+. . .
+
+```
+File "/.../src/types.py", line 57, in <module>: Function funcOnExactlyAB was called with the wrong arguments [wrong-arg-types]
+         Expected: (item: ItemWithAB)
+  Actually passed: (item: FancyItem)
+```
+
 ## How far did we get?
 
 > - first hurdle: call `f` on anything with one extension ✔️

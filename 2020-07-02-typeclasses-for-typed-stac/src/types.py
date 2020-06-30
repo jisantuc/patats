@@ -49,3 +49,9 @@ def funcOnAtLeastAB(item: AtLeastAB) -> None:
 
 # funcOnAtLeastAB(ItemWithAB())
 # funcOnAtLeastAB(FancyItem())
+
+def funcOnExactlyAB(item: ItemWithAB) -> None:
+    return
+
+# funcOnExactlyAB(ItemWithAB())
+# funcOnExactlyAB(FancyItem())
