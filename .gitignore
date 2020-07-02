@@ -1,0 +1,4 @@
+.pytype
+.metals
+.scalafmt.conf
+.vscode
