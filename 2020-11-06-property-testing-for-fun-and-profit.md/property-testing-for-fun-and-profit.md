@@ -1,5 +1,5 @@
 ---
-title: Laws-based Testing
+title: Property testing
 author: James Santucci
 patat:
     wrap: true
@@ -10,8 +10,64 @@ patat:
 
 # What's testing #
 
-> - verification that some expected behavior occurs under known conditions
-> - where do expectations come from?
+> - programs that verify some expected behavior occurs under known conditions
+
+# Programs that verify
+
+- is this a test?
+
+```python
+from .lib import foo
+
+def test_foo():
+    result = foo(3, 4)
+    assert(result == 7)
+```
+
+> - I would say _no_
+
+# Programs that verify
+
+- is this a test?
+
+```python
+from .lib import foo
+
+def test_foo():
+    result = foo(3, 4)
+    assert(result == 7)
+```
+
+```bash
+$ python -m pytest
+```
+
+> - what are this test program's requirements?
+
+# Programs that verify
+
+- is this a test?
+
+```python
+from .lib import foo
+
+def should_work():
+    result = foo(3, 4)
+    assert(result == 7)
+
+if __name__ == '__main__':
+    should_work()
+```
+
+```bash
+$ python thing_that_should_work.py
+```
+
+# This talk
+
+> - tests are programs that verify your expectations when you run them
+> - property testing can save you from having to state your expectations separately about a lot of similar cases
+> - you can property test _anywhere_
 
 # A function #
 
