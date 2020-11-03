@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "test": "mocha"
+  },
+  "type": "module",
+  "dependencies": {
+    "jsverify": "^0.8.4",
+    "mocha": "^8.2.1"
+  }
+}
