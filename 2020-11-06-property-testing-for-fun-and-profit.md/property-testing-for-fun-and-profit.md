@@ -87,3 +87,8 @@ $ sbt compile
 > - when you have an _oracle_
 > - when you have a black box
 > - when you have an expected round trip
+
+# Property testing in python and javascript
+
+> - [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/)
+> - [`jsverify`](http://jsverify.github.io/)
