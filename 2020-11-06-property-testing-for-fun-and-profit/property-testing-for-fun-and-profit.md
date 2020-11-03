@@ -88,7 +88,16 @@ $ sbt compile
 > - when you have a black box
 > - when you have an expected round trip
 
-# Property testing in python and javascript
+# Property testing _everywhere_
 
-> - [`hypothesis`](https://hypothesis.readthedocs.io/en/latest/)
-> - [`jsverify`](http://jsverify.github.io/)
+> - [haskell](https://hackage.haskell.org/package/QuickCheck)
+> - [purescript](https://github.com/purescript/purescript-quickcheck)
+> - [scala](https://www.scalacheck.org/)
+> - [elm](https://package.elm-lang.org/packages/elm-explorations/test/latest)
+> - [rust](https://github.com/BurntSushi/quickcheck)
+> - [C](https://github.com/silentbicycle/theft)
+> - [python](https://hypothesis.readthedocs.io/en/latest/)
+> - [old javascript](http://jsverify.github.io/)
+> - [new javascript](https://github.com/dubzzz/fast-check)
+> - [R](https://github.com/RevolutionAnalytics/quickcheck)
+> - [julia](https://quickcheckjl.readthedocs.io/en/latest/)
