@@ -2,35 +2,46 @@
 title: Property testing
 author: James Santucci
 patat:
+
     wrap: true
     margins:
         left: 40
         right: 40
+
 ---
+
+# Welcome #
+
+> - [Matt Bachmann on Hypothesis](https://www.youtube.com/watch?v=jvwfDdgg93E)
+> - [Old RF ADR on testing](https://github.com/raster-foundry/raster-foundry/blob/develop/docs/architecture/adr-0015-refactor-testing.md#3-property-based-testing)
+
+# This talk #
+
+> - tests are programs that verify your expectations about other programs
+> - property testing can save you from having to state your expectations separately about a lot of similar cases
+> - you can property test _anywhere_
 
 # What's testing #
 
 > - programs that verify some expected behavior occurs under known conditions
 
-# Programs that verify
+# Programs that verify #
 
-- is this a test?
+* is this a test?
 
-```python
+``` python
 from .lib import foo
 
 def test_foo():
     result = foo(3, 4)
-    assert(result == 7)
+    assert result == 7
 ```
 
-> - I would say _no_
+# Programs that verify #
 
-# Programs that verify
+* is this a test?
 
-- is this a test?
-
-```python
+``` python
 from .lib import foo
 
 def test_foo():
@@ -38,17 +49,15 @@ def test_foo():
     assert result == 7, "oh no"
 ```
 
-```bash
+``` bash
 $ python -m pytest
 ```
 
-> - what are this test program's requirements?
+# Programs that verify #
 
-# Programs that verify
+* is this a test?
 
-- is this a test?
-
-```python
+``` python
 from .lib import foo
 
 def should_work():
@@ -59,29 +68,23 @@ if __name__ == '__main__':
     should_work()
 ```
 
-```bash
+``` bash
 $ python thing_that_should_work.py
 ```
 
-# Programs that verify
+# Programs that verify #
 
-- is this a test?
+* is this a test?
 
-```bash
+``` bash
 $ sbt compile
 ```
 
-# This talk
+# A library #
 
-> - tests are programs that verify your expectations about other programs
-> - property testing can save you from having to state your expectations separately about a lot of similar cases
-> - you can property test _anywhere_
+* [`tiny-test`](https://github.com/jisantuc/tiny-test/)
 
-# A library
-
-- [`tiny-test`](https://github.com/jisantuc/tiny-test/)
-
-# When should you property test?
+# When should you property test? #
 
 > - when there are _laws_
 > - when you have an _oracle_
