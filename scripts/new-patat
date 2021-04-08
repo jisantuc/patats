@@ -1,0 +1,24 @@
+#!/bin/bash
+
+title=$1
+titleSlug=$(echo "${title}" | sed 's/ /-/g' | sed -e 's/\(.*\)/\L\1/')
+dir="$(date -u -I)-${titleSlug}"
+
+header=$(cat <<- EOF
+---
+title: $title
+author: James Santucci
+patat:
+
+    wrap: true
+    margins:
+        left: 40
+        right: 40
+
+---
+EOF
+)
+
+mkdir "${dir}"
+
+echo "${header}" > "${dir}/${titleSlug}.md"
