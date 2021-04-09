@@ -12,8 +12,8 @@ patat:
 
     wrap: true
     margins:
-        left: 40
-        right: 40
+        left: 5
+        right: 5
 
 ---
 EOF
