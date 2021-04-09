@@ -13,7 +13,7 @@ patat:
 
 ## Two bad options ##
 
-> - Option 1: JS / gradually TS and live with "things just break at runtime sometimes because frontend testing is **really hard**
+> - Option 1: JS / gradually TS and live with "things just break at runtime sometimes because frontend testing is **really hard**"
 > - Option 2: Use a fancy fully typed compiles-to-JS buddy, stare with hostility at JavaScript every time you need it, and reimplement everything you need from scratch because **ecosystems**
 
 ## Why is breaking at runtime bad? ##
@@ -67,7 +67,7 @@ patat:
 
 ## The problem ##
 
-- STAC 10% time project: write a clien that I can call from JS
+- STAC 10% time project: write a client that I can call from JS
 - STAC: **Spatio**-temporal asset catalog
 - spatial
 - oh no
@@ -92,7 +92,9 @@ patat:
 
 ## Can we solve this problem again live?? ##
 
-**yes**, let's do it
+ish.
+
+yes, let's do it
 
 # Links #
 
