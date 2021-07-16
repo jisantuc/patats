@@ -16,6 +16,7 @@ patat:
 
 - understand narratives about what goes wrong when things go wrong
 - how teams discover and prioritize bugs that affect multiple projects
+- if it would be useful, build an error aggregation aggregator that notifies teams when people on other teams run into the same problem
 
 ## The secret goal
 
@@ -48,4 +49,4 @@ patat:
 
 > - start with Rollbar everywhere -- there's a really generous free tier
 > - think about PAGNIs -- "probably are gonna need its" -- especially where they're expensive to add later
-> - find a way to train prod debugging, since the perfect prod error is probably not magically going to happen
+> - find a way to train prod debugging (including non-error bad outcomes!), since the perfect prod error is probably not magically going to happen
