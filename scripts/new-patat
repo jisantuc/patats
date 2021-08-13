@@ -2,7 +2,7 @@
 
 title=$1
 titleSlug=$(echo "${title}" | sed 's/ /-/g' | sed -e 's/\(.*\)/\L\1/')
-dir="$(date -u -I)-${titleSlug}"
+dir="$(date -u +%Y-%m-%d)-${titleSlug}"
 
 header=$(cat <<- EOF
 ---
