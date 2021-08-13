@@ -26,8 +26,13 @@ patat:
 
 ![](img/graph-ideal.png)
 
-## A second problem
+## A question
 
-- types and codecs make sure that _once data is in the app_, everything is fine
-- what's the consistency check on the data on the wire?
-- how do we discover changes in encoding from backend to frontend, or the opposite?
+> - can we document the data that was actually sent and received in the last good state?
+> - can we use that documentation to _compare expectations_ and _understand what broke_ when we introduce breaking changes?
+
+## A demo
+
+## A problem part 3
+
+![](img/graph-real.png)
