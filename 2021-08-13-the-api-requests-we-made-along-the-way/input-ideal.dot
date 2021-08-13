@@ -1,0 +1,9 @@
+digraph {
+    graph [pad="0.5", nodesep="1"];
+    frontend [class="node"];
+    backend [class="node"];
+    frontend -> backend [class="edge" label="serde"];
+    backend -> frontend [class="edge" label="serde"];
+    frontend -> frontend [class="edge" label="types, tests"];
+    backend -> backend [class="edge" label="types, tests"];
+}
