@@ -1,0 +1,12 @@
+.node {
+    color: "#FFEAD0";
+}
+
+.node.danger {
+    color: "#8C1C13";
+}
+
+.edge {
+    color: "#37505C";
+}
+
