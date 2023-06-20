@@ -104,3 +104,12 @@ $ sbt compile
 > - [new javascript](https://github.com/dubzzz/fast-check)
 > - [R](https://github.com/RevolutionAnalytics/quickcheck)
 > - [julia](https://quickcheckjl.readthedocs.io/en/latest/)
+> - [Java](https://jqwik.net/)
+
+# This talk #
+
+- tests are programs that verify your expectations about other programs
+- property testing can save you from having to state your expectations separately about a lot of similar cases
+- you can property test _anywhere_
+
+✅
