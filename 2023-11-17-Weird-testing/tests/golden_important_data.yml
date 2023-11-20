@@ -1,0 +1,7 @@
+input: |-
+  {"x": 3, "y": 8, "msg": "hi there"}
+
+output:
+  the_x_value: 3
+  the_y_value: 8
+  the_msg: hi there

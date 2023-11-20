@@ -2,26 +2,32 @@
   description = "Useful dev tools for platform development";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-22.11";
+    nixpkgs.url = "nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        nodeJS = pkgs.nodejs-19_x;
-        yarn = pkgs.nodePackages.yarn;
-        python3Packages = (ps: [
+        pythonPackages = (ps: [
+          ps.debugpy
           ps.hypothesis
+          ps.pydantic
           ps.pytest
+          ps.pytest-golden
+          ps.setuptools
         ]);
-        python = pkgs.python311.withPackages python3Packages;
+        python = pkgs.python310.withPackages pythonPackages;
       in
       {
         devShells.default = pkgs.mkShell {
           name = "platform-dev-shell";
-          buildInputs = [ nodeJS python yarn ];
+          buildInputs = [
+            pkgs.mutmut
+            python
+            pkgs.black
+          ];
         };
       });
 }
