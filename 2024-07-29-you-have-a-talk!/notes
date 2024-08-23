@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+
+echo ./notes.md | entr -s 'clear; cat ./notes.md'
+
