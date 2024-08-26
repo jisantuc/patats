@@ -14,7 +14,10 @@ patat:
     margins:
         left: 5
         right: 5
-
+    images:
+        backend: auto
+    speakerNotes:
+      file: ./notes.md
 ---
 EOF
 )
