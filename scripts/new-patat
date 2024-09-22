@@ -14,10 +14,14 @@ patat:
     margins:
         left: 5
         right: 5
-    images:
-        backend: auto
     speakerNotes:
       file: ./notes.md
+    eval:
+      sixel:
+        command: sh
+        replace: true
+        fragment: false
+        wrap: rawInline
 ---
 EOF
 )
