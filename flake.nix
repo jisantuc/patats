@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { nixpkgs, flake-utils, ... }:
@@ -11,6 +11,7 @@
         devShells.default = pkgs.mkShell {
           name = "platform-dev-shell";
           buildInputs = with pkgs; [
+            bat
             entr
             haskellPackages.patat
           ];
