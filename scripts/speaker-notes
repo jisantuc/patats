@@ -1,1 +1,1 @@
-echo ./notes.md | entr -s 'clear; bat --italic-text always ./notes.md'
+echo ./notes.md | entr -s 'clear; vi "+set foldexpr='manual'" -R ./notes.md'

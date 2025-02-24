@@ -11,7 +11,6 @@
         devShells.default = pkgs.mkShell {
           name = "platform-dev-shell";
           buildInputs = with pkgs; [
-            bat
             entr
             haskellPackages.patat
           ];

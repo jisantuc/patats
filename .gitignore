@@ -3,3 +3,5 @@
 .scalafmt.conf
 .vscode
 .direnv
+# Speaker notes file
+notes.md
