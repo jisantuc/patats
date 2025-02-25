@@ -210,16 +210,9 @@ magick convert -resize 480 "too-many-things.jpg" sixel:-
 
 * a lot of your latency isn't going to be because your code is slow (it's because _my_ code is slow)
 
-## Throughput problems
-
-```sixel
-magick convert -resize 1440 "./external-service-slow.png" sixel:-
-```
-
 <!--
-* this is a background task the `python-scheduling-service` runs, and this is a long invocation of it (it took over
-  13 minutes)
-* can Rust talk to KSAT faster?
+* not necessarily _my_ code, but you know, someone else's code -- if you're Doing Microservices™️ a lot of the logic
+  you care about is going to happen somewhere else
 -->
 
 ## Throughput problems
