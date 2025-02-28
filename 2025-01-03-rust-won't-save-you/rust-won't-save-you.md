@@ -8,7 +8,7 @@ patat:
         left: 5
         right: 5
     speakerNotes:
-      file: ./notes.md
+      file: ../notes.md
     eval:
       sixel:
         command: sh
@@ -157,14 +157,17 @@ magick convert -resize 480 "./one-eternity-later.jpg" sixel:-
 
 * what's probably wrong with your service at this point?
 
-. . .
-
 <!--
 * probably not: operationally significant memory management issues, ill-formed arguments in critical code paths,
   difficult software delivery; the reason these are probably not is that if your services are too bad at memory
   management, they fall over; if you can't detect ill-formed arguments in critical code paths, you spend all of your
-  time on pretty dumb bugs; and if you can't deliver software, you... can't deliver software? and you just don't have
-  services/a job/a company anymore, depending on how hard it is.
+  time on dumb bugs; and if you can't deliver software, you... can't deliver software? and you just don't have
+  services/a job/a company anymore, depending on how hard it is for you to deliver software.
+* there's a strong filter on technical stacks that work for building software to do jobs, which is that computers
+  cost money, and your time costs money, and if the computers break too often or it's too hard to get the computers to
+  do new things, companies stop spending money on the computers or the people getting the computers to do things.
+  * this is my economic explanation for the ubiquity of barely good enough software tooling / the seeming permanence
+    of python
 * probably:
   * you have a few leaky abstractions that show up everywhere that are going to be costly to un-leaky
   * the services you talk to don't have clear domains, so you need some stuff from them where, to give you what you
@@ -194,16 +197,23 @@ magick convert -resize 480 "spaghetti.webp" sixel:-
 magick convert -resize 480 "too-many-things.jpg" sixel:-
 ```
 
+. . .
+
+```sixel
+magick convert -resize 480 "utils.jpg" sixel:-
+```
+
 <!--
 * Let's say you have an "abstraction" that doesn't have an interface, it's just a class that starts with methods
-  to do two related things
+to do two related things
 * Later you need to do a kind of related thing, so it goes on the class
 * Still later, you've free associated your way to a class that no longer has a defined responsibility and instead has
-  a million things it's responsible for
+a million things it's responsible for
 * It doesn't have to be a class (it's python! or it's Rust! nothing has to be a class!) but God modules and God
-  classes are, I think, the same kind of code smell
+classes are, I think, the same kind of code smell
 * Your least favorite gigantic module doesn't become suddenly tractable because it's 6000 lines of loosely related
-  `utils` code written in Rust instead of in Python
+`utils` code written in Rust instead of in Python
+* 
 -->
 
 ## Throughput problems
