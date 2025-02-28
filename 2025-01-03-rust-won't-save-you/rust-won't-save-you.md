@@ -56,7 +56,7 @@ patat:
 ## My credentials
 
 ```sixel
-magick convert -resize 480 "language-wars.png" sixel:-
+convert -resize 480 "language-wars.png" sixel:-
 ```
 
 <!--
@@ -242,38 +242,26 @@ magick convert -resize 1440 "slow-other-service.png" sixel:-
   of the time
 -->
 
-## If we only rewrote in Rust
+## The Rust edit
 
-* the traces above would be faster by an amount no one would notice
+* the traces above would be faster
 * they'd be... memory... safer?
 * they also wouldn't have runtime errors caused by invalid data being passed around?
 
-# When is language choice important
-
-## Choosing a language when you have nothing
-
-* for some new project, you want to choose a language based on _language features_ and how they map to your problem
-  domain
-* some important language features:
-  * type safety
-  * memory safety
-  * ecosystem
-  * syntax
-  * runtime for the kinds of tasks that you want to run
-
 <!--
-* type safety: you should probably be suspicious of anyone who makes too strong of a claim here https://danluu.com/empirical-pl/
-* ecosystem: libraries useful for what you're up to, off-the-shelf CI components in Gitlab or GitHub, JUnit-style
-  coverage reports
-* syntax:  if you love operators, obviously Haskell; if you hate operators, obviously not Haskell
-* runtime: if you have a bunch of array programming to do, don't pick a language where the ecosystem has great support
-  for everything but array programming
-* but really, you're probably not going to learn a new language for your greenfield service even if it's the best
-  language for the job -- you're going to pick what you know best, and that's maybe even the right choice
+* faster by some amount, maybe someone would notice? But not if _my_ slow code is the problem
+* Probably it wouldn't be safer! There's the NSA thing that everyone got all excited about, but that
+  also included Python, C#, Java, Go, and Swift in the recommendations. Where's my Java gang?
+  https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/article/3608324/us-and-international-partners-issue-recommendations-to-secure-software-products/
+* Maybe there wouldn't be runtime errors? I don't know enough about Rust to know about this, but everything deals
+  with data from the real world at some point. I'd bet Rust has an easier time with Parse, Don't Validate
+  than python does (it's awful in python, and especially awful in `pydantic`, but I know, no one asked), but bad
+  input is still bad input.
 -->
 
-## Choosing a language when you have a business to operate
+## How to choose a new language when you have production services to operate
 
+* DON'T
 * choose the language that your services are already running in
 
 <!--
@@ -282,14 +270,31 @@ magick convert -resize 1440 "slow-other-service.png" sixel:-
   and new weird failure modes, and new auxiliary tools that can get out of sync on different developers' machines,
   and new weird stuff that goes wrong when the service has been mostly ignored for two months because it's been doing
   fine, and...
+* there is _so much more_ of this than you think there is.
 -->
 
 # How to rewrite your service in Rust
 
+## How to rewrite your service at all
+
+## What happens when you're wrong?
+
+## What happens when you're right?
 <!--
 OUTLINE
 
 * given you want to migrate service A to service A' + service B, how do you know that service A' + service B = service A?
+  * if you're EXTREMELY LUCKY -- the interfaces between service A and everything that talks to service A will make it obvious
+    what you need to care about
+  * you are not extremely lucky
+  * two examples: `ground-comms`, missing downlinks V2 from scheduling -> processing; processing sending two messages
+    _fast_ when the scheduling service was counting on it sending the two messages with a longer gap
+    * first example -- giant object, not obvious which part is important where, message serving like a million purposes
+    * second example -- again a giant object where processing workflow told scheduling "object x should have state y,"
+      which was fine while the second message for a specific piece of object x (missing pulses) wasn't getting
+      processed at the same time
+  * YOU WILL BE WRONG. when you're wrong, someone is likely to get paged. if you're lucky, it will be you.
+  * you are not extremely lucky. (sorry Eugene)
 * you have to know what service B's responsibilities are
 * which means you have to know what service A's responsibilities are
 * which means... uh-oh, now you have a design documentation problem
