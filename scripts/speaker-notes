@@ -1,1 +1,1 @@
-echo ./notes.md | entr -s 'clear; vi "+set foldexpr='manual'" -R ./notes.md'
+echo ./notes.md | entr -s 'clear; bat ./notes.md'
