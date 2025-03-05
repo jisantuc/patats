@@ -1,5 +1,5 @@
 ---
-title: Rust won't save you
+title: (Rewriting it in) Rust won't save you
 author: James Santucci
 patat:
 
@@ -17,7 +17,14 @@ patat:
         wrap: rawInline
 ---
 
-# (Rewriting it in) Rust won't save you
+## (Rewriting it in) Rust won't save you
+
+<!--
+Hello everyone, welcome to "Rewriting it in Rust won't save you", where I'll try to convince you that "it's not
+written in Rust" isn't responsible for anything that makes you mad on a daily basis.
+
+There are some reasonable alternate titles for this talk -- **SLIDE**
+-->
 
 ## Alternate titles
 
@@ -29,28 +36,49 @@ patat:
 
 * Python won't kill you
 * JavaScript won't kill you
+* Java won't kill you
 * Ruby won't kill you? PHP won't kill you?
 
 <!--
-* intended audience here is mainly people who operate the web portion of Umbra's software stack; I get that FSW has
-  different constraints, and Rust vs. ... is a really important point
-* do people still write Ruby? I don't know
-* let's take python as a strawman -- if you want to have opinions about python, there are plenty of reasons you can
-  pick to like or dislike python:
-  * it's too slow
-  * dynamic typing is bad, or gradual typing is bad, or the static typing part of it is bad
-  * modeling is too OO-y without a convention of the good parts of OO (so many god classes / classes with no defined
-    interfaces that just become dumping grounds for anything you need to happen) / too functional (lambdas are a
-    mistake, reduce is too complicated, comprehensions are syntactically confusing relative to loops, whatever)
-  * the module system is for children
-  * the package management/artifact publication story is the worst of any major language (citation needed)
-    (or maybe you're over lockfiles and you miss python 2.7.x when everything was compatible with your python version
-    because there was practically one python version)
-* or let's take javascript as a strawman:
-  * actually let's not, just compare the Slack emoji we have for python and javascript
-* point is, anywhere in this talk you see "Rust" you can substitute "Haskell" or "Zig" or "GoLang" or Clojure or Elixir
-  whatever language is supposed to solve all of our problems tomorrow, and anywhere in this talk you see "Python" you
-  can substitute "JavaScript" or "PHP" or "Java" or any other un-sexy language
+
+But I stuck with "Rust won't save you," because it's 2025 and I've wasted, I don't know, _whole minutes_ of my life
+having to read past "it's written in Rust!" as the first feature people have listed in READMEs, and I'm over it.
+
+There are other framings as well -- **SLIDE**
+
+Do people still write Ruby? I don't know, probably, the world is big.
+
+The big idea of this talk is that, while language choice matters some, but if you're careful, try hard, and really work
+at it, you can write software you'll hate in three months in any language. **PAUSE** Or software that you'll still
+love in six months in any language I guess.
+
+My intended audience here is mainly people who operate the web portion of Umbra's software stack; I know less about
+FSW's different constraints, so I'm mainly going to focus on a hypothetical rewrite of a backend web service in Rust.
+Since our backend services are Python right now, let's take Python as a strawman.
+
+If you have opinions about python, there are plenty of reasons you can pick to like or dislike python:
+
+* it's too slow
+* dynamic typing is bad, or gradual typing is bad, or the static typing part of dynamic typing is bad -- somehow you
+  hear all of these
+* modeling is too OO-y without a convention of the good parts of OO (so many god classes / classes with no defined
+  interfaces that just become dumping grounds for anything you need to happen) / too functional (lambdas are a
+  mistake, reduce is too complicated, comprehensions are syntactically confusing relative to loops, whatever)
+* the module system is for children
+* package management is worse than _insert your favorite language here_ (citation needed)
+  (or maybe you're over lockfiles and you miss python 2.7.x when everything was compatible with your python version
+  because there was practically one python version)
+
+We could play a similar game with JavaScript, but I don't touch any of our frontend code, and vanilla JavaScript is
+enough of a punching bag on its own that we don't have any not-on-fire JavaScript emojis.
+
+The languages themselves aren't super important though -- anywhere in this talk you hear "Rust" you can substitute
+Haskell or Zig or GoLang or Clojure or Elixir whatever language is supposed to solve all of our problems tomorrow,
+and anywhere in this talk you see "Python" you can substitute "JavaScript" or "PHP" or "Java" or any other un-sexy
+language.
+
+I am not going to try to convince you that Python is better than Rust. I am going to try to convince you that you
+shouldn't daydream about rewriting stuff in Rust anyway.
 -->
 
 ## My credentials
@@ -59,17 +87,27 @@ patat:
 convert -resize 480 "language-wars.png" sixel:-
 ```
 
+. . .
+
+(the `IO` monad is in fact better than futures)
+
 <!--
-* A long time ago I was excited about Haskell and wanted to rewrite a Scala service in Haskell
-* Isn't Scala complicated and weird enough? NO! It's _impure_! Because JVM, it doesn't support
-  _referential transparency_!
-* And so I filled out the relevant forms to spend my 10% time (what it sounds like) on porting one piece of the
-  database interaction to Haskell. There's still a
-  [branch](https://github.com/jisantuc/raster-foundry/tree/experiment/js/haskell-foundry) if you want to see how that
-  went. I'd do a better job today, but it was a ton of work that included making solo choices over libraries for the
-  less exciting parts of application development -- "my code is fast and _safe_" is fun in the abstract, "my code is
-  fast and _safe_ and... like... takes these objects I care about and puts them in and reads them from a database"
-  is not all that exciting.
+Why should you listen to me? Am I just a Rust hater who wants you not to get to write Rust? I'd love for you to get to
+write Rust!
+
+* A long time ago I was excited about Haskell and wanted to rewrite a Scala service in Haskell. We'd read _Haskell
+  Programming From First Principles_ as a group called Functional Summer, January had rolled around so we'd just
+  finished it, and I was ready to put my enthusiastic beginner Haskell knowledge to the test.
+* We had a Scala service, and I thought it would be fun and cool and maybe useful to rewrite the database interaction
+  for one of the entities in Haskell.
+* You might be asking -- isn't Scala complicated and weird enough? NO! It's _impure_! Because of JVM, it's _tainted_
+  by OOP! It _has mutation_!
+* To me -- Haskell was _obviously better_ -- the IO monad was obviously better than Futures, which are only *kind of*
+  if you don't look too closely monadic; first-class typeclasses were obviously superior to implicit arguments;
+  even further down the rabbit hole things like Eta lang meant we could still use JVM libraries that we depended on
+  with "pretty much Haskell"... why didn't anyone care that we'd get "more correct" code at basically no cost?
+
+**SLIDE**
 -->
 
 ## My credentials
@@ -78,26 +116,25 @@ convert -resize 480 "language-wars.png" sixel:-
 magick convert -resize 480 "what-could-it-cost.jpg" sixel:-
 ```
 
-. . .
-
-(the `IO` monad is in fact better than futures)
-
 <!--
-* To me -- Haskell was _obviously better_ -- the IO monad was obviously better than Futures, which, through
-  non-laziness, break referential transparency; first-class typeclasses were obviously superior to implicit arguments;
-  even further down the rabbit hole things like Eta lang meant we could still use JVM libraries with "basically
-  Haskell"... why didn't anyone care that we'd get "more correct" code at basically no cost?
-* Eventually we got more into _functional Scala_ in the TypeLevel ecosystem, getting an IO monad from a framework
-  inspired by Rust's `tokio` and I decided Scala is ok enough that my next job was helping Java
-  developers be better at Scala full time.
-* I was a true believer -- even if I'd stopped fighting for Haskell in the language wars, I was still fighting for
-  Haskell-y Scala (if you believe the marketing speak of the people who found that ecosystem too complicated) or
-  Technically Superior Scala (if you believe the marketing speak of the people like me who really liked the
-  Haskell-y FP ecosystem in Scala). To this day a few of the libraries in that ecosystem are what I think of as
-  the best I've used in their domains, sometimes without competitors (`cats`/`cats-effect`), sometimes with a
-  competitor I've only kind of dabbled in (`fs2` is the best streaming library I've ever used, but I've only ever used
-  one other streaming library -- `conduit` -- and then only barely), and sometimes with a bunch of other competitors
-  (last I checked on this, I thought `Scala.js` is the best compiles-to-javascript language out there)
+* And so I filled out the relevant forms to spend 10% of my time on porting one piece of the database interaction to
+  Haskell. There's still a
+  [branch](https://github.com/jisantuc/raster-foundry/tree/experiment/js/haskell-foundry) if you want to see how that
+  went. I'd do a better job today, but it was a ton of work that included making solo choices over libraries for the
+  less exciting parts of application development -- "my code is fast and _safe_" is fun in the abstract, "my code is
+  fast and _safe_ and... like... takes these objects and puts them into the database and reads them from the database"
+  is not all that exciting. That all went basically nowhere.
+* Things I included:
+  * one database model
+  * a test harness that made sure I could do database serde with the model
+* Things I did not include:
+  * anything to manage database migrations (my database was already provided from the actual application)
+  * any kind of wiring to run an application that could use my database model in a useful way
+  * wiring up to any kind of CI process (which also means making sure CI can run the Haskell code -- that's easy
+    enough for current me with `nix`, but it would have been _really hard_ for past me)
+* The commit history stretches from late October 2018 to mid-February 2019
+
+**SLIDE**
 -->
 
 ## My credentials
@@ -107,6 +144,14 @@ magick convert -resize 480 "traverse.png" sixel:-
 ```
 
 <!--
+* Eventually we got more into _functional Scala_, and I decided Scala is ok enough that my next job was helping Java
+  developers be better at Scala full time.
+* I was a true believer -- even if I'd stopped fighting for Haskell in the language wars, I was still fighting for
+  Haskell-y Scala. To this day a few of the libraries in that ecosystem are what I think of as
+  the best I've used in their domains, sometimes without competitors (`cats`/`cats-effect`), sometimes with a
+  competitor I've only kind of dabbled in (`fs2` is the best streaming library I've ever used, but I've only ever used
+  one other streaming library -- `conduit` -- and then only barely), and sometimes with a bunch of other competitors
+  (last I checked on this, I thought `Scala.js` is the best compiles-to-javascript language out there)
 * tl;dr: I've been the "why doesn't anyone care about ___ as much as I do?" person. For Haskell/Haskell-y Scala, it's
   _correctness_ and _mathematically rigorous abstraction_ and "have you tried `traverse`?" and
   "all design patterns are literally just functions"
@@ -114,26 +159,37 @@ magick convert -resize 480 "traverse.png" sixel:-
   more benefits/memes
 -->
 
-## <fill in the blank> solves this!
+## <your favorite language> solves this!
 
-* Rust is probably a better language than python
+* Rust is *probably* a better language than python
 
 . . .
 
-* memory safety is probably good, though I don't know why Pythonistas (or Java developers or anyone who mainly writes
-  in a language with a garbage collector) would care
-* speed is nice
+* memory safety/the borrow checker without having to think about a garbage collector is neat
+* going fast is nice
 * people seem to like `cargo`
-* inline testing is pretty neat
+* inline testing or whatever you call it where you write the tests in the same module as the production code looks
+  super cool
 
 <!--
+* I've thought often "Haskell solves this!"
+
+**SLIDE**
+
 * sometimes whatever you fill in the blank with is Rust, sometimes it's GoLang, sometimes it's zig, you get the idea
-* better: it's a lot newer! Rust 1.0 May 2015 vs. Feb 1991 for the first Python -- that's 25 years of stuff
-  to learn from in language design, computers today are more like computers from 2015 than computers today are like
-  computers in 1991
 * I don't think there's a definitive ranking of the best programming languages or a universal scale of goodness, but if
   you wrote down all the things you want in a language, it's likely that in 2025, Rust in general makes better trades
   than Python does
+* better: it's a lot newer! Rust 1.0 May 2015 vs. Feb 1991 for the first Python -- that's 25 years of stuff
+  to learn from in language design, and computers today are more like computers from 2015 than computers today are like
+  computers in 1991. Python obviously has some evolutionary scars (hi GIL!) that Rust doesn't. Rust *should* be better.
+* Obviously *you* are not like past me, and you've got more than memes to justify whatever Rust rewrite you want, and
+  you'd spend more than 10% of your time on it when you could find the time, and you'll have an easier time picking
+  libraries and getting CI set up in 2025 for Rust than the time I had in 2018/2019 for Haskell, but
+
+Despite all this, I think you shouldn't day dream about rewriting your least favorite service in Rust anyway.
+
+**SLIDE**
 -->
 
 ## Digression: a real-life task
