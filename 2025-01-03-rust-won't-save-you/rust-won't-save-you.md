@@ -10,6 +10,10 @@ patat:
     speakerNotes:
       file: ../notes.md
     eval:
+      dot:
+        command: graph-easy --from=dot --as=boxart
+        fragment: false
+        replace: true
       sixel:
         command: sh
         replace: true
@@ -17,7 +21,7 @@ patat:
         wrap: rawInline
 ---
 
-## (Rewriting it in) Rust won't save you
+# (Rewriting it in) Rust won't save you
 
 <!--
 Hello everyone, welcome to "Rewriting it in Rust won't save you", where I'll try to convince you that "it's not
@@ -41,22 +45,25 @@ There are some reasonable alternate titles for this talk -- **SLIDE**
 
 <!--
 
-But I stuck with "Rust won't save you," because it's 2025 and I've wasted, I don't know, _whole minutes_ of my life
+But I stuck with "Rust won't save you," because it's 2025 and I've spent, I don't know, _whole minutes_ of my life
 having to read past "it's written in Rust!" as the first feature people have listed in READMEs, and I'm over it.
 
 There are other framings as well -- **SLIDE**
 
-Do people still write Ruby? I don't know, probably, the world is big.
-
 The big idea of this talk is that, while language choice matters some, but if you're careful, try hard, and really work
-at it, you can write software you'll hate in three months in any language. **PAUSE** Or software that you'll still
-love in six months in any language I guess.
+at it, you can write software you wish you hadn't in three months in any language. **PAUSE** Or software that you'll
+still be proud of in six months in any language.
+
+The obvious question here is "save you from what?" Two things:
+
+1. the hard parts of writing good services in python
+1. the hard parts of microservices
 
 My intended audience here is mainly people who operate the web portion of Umbra's software stack; I know less about
 FSW's different constraints, so I'm mainly going to focus on a hypothetical rewrite of a backend web service in Rust.
-Since our backend services are Python right now, let's take Python as a strawman.
 
-If you have opinions about python, there are plenty of reasons you can pick to like or dislike python:
+To be clear about my biases, I do not love Python. I have my reasons, but you hear plenty of reasons to be cranky
+about Python, especially when people want to write different flavors of not-Python:
 
 * it's too slow
 * dynamic typing is bad, or gradual typing is bad, or the static typing part of dynamic typing is bad -- somehow you
@@ -69,16 +76,16 @@ If you have opinions about python, there are plenty of reasons you can pick to l
   (or maybe you're over lockfiles and you miss python 2.7.x when everything was compatible with your python version
   because there was practically one python version)
 
-We could play a similar game with JavaScript, but I don't touch any of our frontend code, and vanilla JavaScript is
-enough of a punching bag on its own that we don't have any not-on-fire JavaScript emojis.
+You could list similar complaints about JavaScript, but I don't touch any of our frontend code, and vanilla JavaScript
+is enough of a punching bag on its own that we don't have any not-on-fire JavaScript emojis.
 
 The languages themselves aren't super important though -- anywhere in this talk you hear "Rust" you can substitute
 Haskell or Zig or GoLang or Clojure or Elixir whatever language is supposed to solve all of our problems tomorrow,
 and anywhere in this talk you see "Python" you can substitute "JavaScript" or "PHP" or "Java" or any other un-sexy
 language.
 
-I am not going to try to convince you that Python is better than Rust. I am going to try to convince you that you
-shouldn't daydream about rewriting stuff in Rust anyway.
+I am not going to try to convince you that Python is better than Rust, or that they're about as good as each other.
+I am going to try to convince you that you shouldn't daydream about rewriting your services in Rust anyway.
 -->
 
 ## My credentials
@@ -101,11 +108,12 @@ write Rust!
 * We had a Scala service, and I thought it would be fun and cool and maybe useful to rewrite the database interaction
   for one of the entities in Haskell.
 * You might be asking -- isn't Scala complicated and weird enough? NO! It's _impure_! Because of JVM, it's _tainted_
-  by OOP! It _has mutation_!
-* To me -- Haskell was _obviously better_ -- the IO monad was obviously better than Futures, which are only *kind of*
-  if you don't look too closely monadic; first-class typeclasses were obviously superior to implicit arguments;
-  even further down the rabbit hole things like Eta lang meant we could still use JVM libraries that we depended on
-  with "pretty much Haskell"... why didn't anyone care that we'd get "more correct" code at basically no cost?
+  by OOP! It _has non-obvious mutation_!
+* To me -- Haskell was _obviously better_ -- why didn't anyone care that we'd get "more correct" code at basically no cost?
+  * reasons, in case anyone asks: the IO monad was obviously better than Futures, which are only *kind of*
+    if you don't look too closely monadic; first-class typeclasses were obviously superior to implicit arguments;
+    even further down the rabbit hole things like Eta lang meant we could still use JVM libraries that we depended on
+    with "pretty much Haskell"... 
 
 **SLIDE**
 -->
@@ -145,21 +153,22 @@ magick convert -resize 480 "traverse.png" sixel:-
 
 <!--
 * Eventually we got more into _functional Scala_, and I decided Scala is ok enough that my next job was helping Java
-  developers be better at Scala full time.
-* I was a true believer -- even if I'd stopped fighting for Haskell in the language wars, I was still fighting for
-  Haskell-y Scala. To this day a few of the libraries in that ecosystem are what I think of as
-  the best I've used in their domains, sometimes without competitors (`cats`/`cats-effect`), sometimes with a
-  competitor I've only kind of dabbled in (`fs2` is the best streaming library I've ever used, but I've only ever used
-  one other streaming library -- `conduit` -- and then only barely), and sometimes with a bunch of other competitors
-  (last I checked on this, I thought `Scala.js` is the best compiles-to-javascript language out there)
+  developers be better at functional Scala full time.
+* At an internal talk at that second job on one of the functional abstractions provided by one of the libraries,
+  some Java dev with like 30 years of experience asked "is this supposed to be easy?"
 * tl;dr: I've been the "why doesn't anyone care about ___ as much as I do?" person. For Haskell/Haskell-y Scala, it's
   _correctness_ and _mathematically rigorous abstraction_ and "have you tried `traverse`?" and
   "all design patterns are literally just functions"
 * for Rust I gather it's "speed" and "memory safety" and, I don't know, some Rust enthusiast can probably rattle off
-  more benefits/memes
+  more benefits
+* But the point of this story is -- I too have wanted people to write everything in a better language. Rust isn't
+  Haskell and you're not me from several years ago, but I'm still willing to bet several burritos that spinning up Rust
+  skills for your team is harder than you think.
 -->
 
-## <your favorite language> solves this!
+# Why Rust?
+
+## Why Rust in general?
 
 * Rust is *probably* a better language than python
 
@@ -170,87 +179,95 @@ magick convert -resize 480 "traverse.png" sixel:-
 * people seem to like `cargo`
 * inline testing or whatever you call it where you write the tests in the same module as the production code looks
   super cool
+* I like "pair programming with the compiler" and I think I'd like clippy
 
 <!--
-* I've thought often "Haskell solves this!"
+* I won't dispute that Rust is probably better than Python at being fast and at data modeling and probably a bunch
+  of other things.
 
 **SLIDE**
 
-* sometimes whatever you fill in the blank with is Rust, sometimes it's GoLang, sometimes it's zig, you get the idea
 * I don't think there's a definitive ranking of the best programming languages or a universal scale of goodness, but if
   you wrote down all the things you want in a language, it's likely that in 2025, Rust in general makes better trades
   than Python does
 * better: it's a lot newer! Rust 1.0 May 2015 vs. Feb 1991 for the first Python -- that's 25 years of stuff
   to learn from in language design, and computers today are more like computers from 2015 than computers today are like
-  computers in 1991. Python obviously has some evolutionary scars (hi GIL!) that Rust doesn't. Rust *should* be better.
-* Obviously *you* are not like past me, and you've got more than memes to justify whatever Rust rewrite you want, and
-  you'd spend more than 10% of your time on it when you could find the time, and you'll have an easier time picking
-  libraries and getting CI set up in 2025 for Rust than the time I had in 2018/2019 for Haskell, but
+  computers in 1991. It's also 25 years of not accumulating evolutionary scars like the GIL. Rust *should* be better.
 
 Despite all this, I think you shouldn't day dream about rewriting your least favorite service in Rust anyway.
 
 **SLIDE**
 -->
 
-## Digression: a real-life task
+# Why not Rust?
 
-* your job is to design a service
-* that service, as of right now, needs to talk to two other services
-* you write it in python because everybody uses python
+## What's wrong with your services today?
 
-<!--
-* this is kind of our status quo on the backend, but you could play out something similar for Rust -> WASM vs. JS/TS
-  on the frontend
-* there are costs, sure -- defaulting to python means everything pays whatever costs you have to pay from python apps,
-  like the list of stuff above. everyone more or less knows those costs, so who cares? but they're costs nonetheless.
--->
-
-## Digression: a real-life task
-
-```sixel
-magick convert -resize 480 "./one-eternity-later.jpg" sixel:-
-```
-
-* what's probably wrong with your service at this point?
+* does your service have non-communicative or confusing interfaces?
+* is your service too slow?
+* is your service too complex?
 
 <!--
-* probably not: operationally significant memory management issues, ill-formed arguments in critical code paths,
-  difficult software delivery; the reason these are probably not is that if your services are too bad at memory
-  management, they fall over; if you can't detect ill-formed arguments in critical code paths, you spend all of your
-  time on dumb bugs; and if you can't deliver software, you... can't deliver software? and you just don't have
-  services/a job/a company anymore, depending on how hard it is for you to deliver software.
-* there's a strong filter on technical stacks that work for building software to do jobs, which is that computers
-  cost money, and your time costs money, and if the computers break too often or it's too hard to get the computers to
-  do new things, companies stop spending money on the computers or the people getting the computers to do things.
-  * this is my economic explanation for the ubiquity of barely good enough software tooling / the seeming permanence
-    of python
-* probably:
-  * you have a few leaky abstractions that show up everywhere that are going to be costly to un-leaky
-  * the services you talk to don't have clear domains, so you need some stuff from them where, to give you what you
-    you need, they maybe need some stuff from you
-  * there are missing models that everybody has a piece of, or that one class has to stand in for in a bunch of
-    different contexts
-* also probably: a year has passed and you're still in business! You're probably running into scaling problems, good
-  job.
+* Ok, so if Rust is probably technically superior to Python, why shouldn't we rewrite things in Rust? My short answer
+  is that Rust isn't magic, it's just _really good at some stuff_.
 -->
 
-## Complexity problems
+## Why won't Rust magically make your data modeling better?
 
-```sixel
-magick convert -resize 480 "spaghetti.webp" sixel:-
+[example](https://www.rustfinity.com/blog/parse-dont-validate#the-traditional-way:-validate)
+
+```rust
+async fn create_user_handler(body: &str) -> Result<(), Error> {
+    let body: Value = serde_json::from_str(body)?;
+ 
+    let email = body.get("email").ok_or("Email is required")?;
+    let password = body.get("password").ok_or("Password is required")?;
+ 
+    if !validate_email(email) {
+        return Err("Invalid email");
+    }
+ 
+    if !validate_password(password) {
+        return Err("Invalid password");
+    }
+ 
+    // ...
+    create_user(email, password).await?;
+}
+ 
+async fn create_user(email: &str, password: &str) -> Result<(), Error> {
+    // ...
+}
 ```
 
 <!--
-* suppose instead your problem is that you've got some logic that exhibits the message chain code smell (function call
-  whose main job is to slightly repackage the data for another function call which slightly repackages the data for
-  another function call which ...)
-* I don't think Rust spaghetti is better than python spaghetti? It'll be faster to run, but it'll still be spaghetti
+* this example comes from one of the nine million "Parse, Don't Validate" riffs (as an example of what not to do)
+* validators like this are _forgetful_ -- they throw away the knowledge you gain from validation, so anywhere you
+  want to re-use something that you need to be validated, you have to check, since there's no evidence that that
+  validation has occurred. So when you want to deal with the "user" that you've created here, you still have no
+  knowledge of whether validation occurred. (In this case it's side-effecting rather than returning an object, but
+  still)
+* if you're used to `validate_foo(...) -> None:`, where either you get errors or your code continues to execute, this
+  is the kind of thing you're going to write, and having `Result` available doesn't make the types any more informative
+* or more generally, if you write your existing Python code, but in Rust, it'll have the same problems as the existing
+  Python code.
 -->
 
-## Complexity problems
+## Why won't Rust magically make your data and interface modeling better?
 
-```sixel
-magick convert -resize 480 "too-many-things.jpg" sixel:-
+* Rust is better at modeling data, but are _you_ better at modeling data in Rust?
+* Rust's module system is probably better than Python's, but are _you_ better at module design in Rust?
+
+. . .
+
+```python
+def foo(q0: float, q1: float, flag: bool) -> float:
+    ...
+```
+
+```rust
+fn foo(q0: f32, q1: f32, flag: Boolean) -> float:
+  ...
 ```
 
 . . .
@@ -260,116 +277,125 @@ magick convert -resize 480 "utils.jpg" sixel:-
 ```
 
 <!--
-* Let's say you have an "abstraction" that doesn't have an interface, it's just a class that starts with methods
-to do two related things
-* Later you need to do a kind of related thing, so it goes on the class
-* Still later, you've free associated your way to a class that no longer has a defined responsibility and instead has
-a million things it's responsible for
-* It doesn't have to be a class (it's python! or it's Rust! nothing has to be a class!) but God modules and God
-classes are, I think, the same kind of code smell
-* Your least favorite gigantic module doesn't become suddenly tractable because it's 6000 lines of loosely related
-`utils` code written in Rust instead of in Python
-* 
+* It's tempting to think that because you have a much stronger type system, you'll do a better job modeling data.
+
+*SLIDE*
+
+* I think this is incorrect for at least two reasons:
+  1. types aren't data modeling. int, string, and bool are garbage types, but you'll use them everywhere anyway unless
+     you get really used to newtype-ing everything. A function that takes two floats and a bool and returns a float
+     in Rust is no more obvious than a function that takes two floats and a bool and returns a float in python.
+  2. if you knew a cleaner, nicer set of interfaces for your service _right now_, you wouldn't need to
+     rewrite your service in Rust to take advantage of it.
+* Better types aren't magic, and designing good interfaces is hard even with good types.
+* If you're not used to leveraging the type system the way that you can in Rust, you're not going to write super
+  safe code leveraging the type system, you're going to write Python, but in Rust.
+
+*SLIDE*
+
+* Module design also isn't free, which explains the nearly 78 thousand `utils.rs` modules (as a sanity check, I also
+  searched utils.java and utils.py, and they each had about 1.5 million files in GitHub; give it time, Rust
+  will get there!)
+  * some stats --
+    * Rust: 78k `utils.rs`, 11.8 million `*.rs`, about 0.6% of files
+    * Haskell: 14.3k `utils.hs`, 1.6 million `*.hs`, about 0.9% of files
+    * Java: 1.3 million `utils.java`, 164 million `*.java`, about 0.8% of files
+    * Python: 1.5 million `utils.py` out of 94.4 million `*.py`, about 1.6% of files -- this slightly deflated
+      by about 4 million mandatory boilerplate `__init__.py` files but not by much
+
+*SLIDE*
 -->
 
-## Throughput problems
+## Why won't Rust magically make your services faster?
 
 * a lot of your latency isn't going to be because your code is slow (it's because _my_ code is slow)
 
-<!--
-* not necessarily _my_ code, but you know, someone else's code -- if you're Doing Microservices™️ a lot of the logic
-  you care about is going to happen somewhere else
--->
-
-## Throughput problems
+. . .
 
 ```sixel
 magick convert -resize 1440 "sql-query-slow.png" sixel:-
 ```
-
-<!--
-* a relatively slow `command-invocations` `GET` in `sat-gateway` (about 13 seconds)
-* will Rust make your SQL queries faster or help you create a schema that's better for the queries you execute
-  all the time?
--->
-
-## Throughput problems
 
 ```sixel
 magick convert -resize 1440 "slow-other-service.png" sixel:-
 ```
 
 <!--
-* a relatively slow HTTP request for `restricted-access-areas` in `commercial-tasking-service`
-* only slow because `python-scheduling-service` was slow
-* `python-scheduling-service` was slow because it sat around forever before it was allowed to talk to the database
-* will Rust make other teams' services faster or help them configure their database connection pools better?
-* point on all of these -- even if Rust is 100x faster, you're still going to sit around waiting for the network a lot
-  of the time
--->
+* not necessarily _my_ code, but you know, someone else's code -- if you're Doing Microservices™️ a lot of the logic
+  you care about is going to happen somewhere else (sometimes your database!)
 
-## The Rust edit
+*SLIDE*
 
-* the traces above would be faster
-* they'd be... memory... safer?
-* they also wouldn't have runtime errors caused by invalid data being passed around?
+* these two requests are:
+  * a relatively slow command history `GET` in the `sat-gateway` (about 13 seconds)
+  * a relatively slow HTTP request for `restricted-access-areas` from commercial tasking to scheduling
+* the first request was slow because the database queries took a while. that gets faster with a schema / operations
+  that query faster, e.g. with indices on relevant fields if it's a performance-sensitive query. Maybe it _is_
+  performance-sensitive and you'd update the query to reflect that if you wrote the service in Rust.
+  But why not just do that in Python?
+* the scheduling request was slow because it sat around forever before it was allowed to talk to the database;
+  that gets faster with better database connection pool tuning, not with Rust. maybe you'll do a better job with your
+  connection pool config in Rust. Why not just do that in Python?
+* So there are two things working against you here:
+  * If you rewrite your service in Rust, you'll still have to write good database queries and figure out good connection
+    pool configurations in your own services to prevent slowdowns that have nothing to do with the application code.
+  * If you rewrite your service in Rust, even if your service is 100 times faster, you'll still have to talk to _my_
+    slow old service.
+* even if Rust is 100x faster, you're still going to sit around waiting for the network a lot of the time
 
-<!--
-* faster by some amount, maybe someone would notice? But not if _my_ slow code is the problem
-* Probably it wouldn't be safer! There's the NSA thing that everyone got all excited about, but that
-  also included Python, C#, Java, Go, and Swift in the recommendations. Where's my Java gang?
-  https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/article/3608324/us-and-international-partners-issue-recommendations-to-secure-software-products/
-* Maybe there wouldn't be runtime errors? I don't know enough about Rust to know about this, but everything deals
-  with data from the real world at some point. I'd bet Rust has an easier time with Parse, Don't Validate
-  than python does (it's awful in python, and especially awful in `pydantic`, but I know, no one asked), but bad
-  input is still bad input.
--->
-
-## How to choose a new language when you have production services to operate
-
-* DON'T
-* choose the language that your services are already running in
-
-<!--
-* really I think that's the whole decision tree -- KEEP GOING
-* not just you, but *EVERYONE* will have to learn new testing frameworks, and new web frameworks, and a new CI setup,
-  and new weird failure modes, and new auxiliary tools that can get out of sync on different developers' machines,
-  and new weird stuff that goes wrong when the service has been mostly ignored for two months because it's been doing
-  fine, and...
-* there is _so much more_ of this than you think there is.
+*SLIDE*
 -->
 
 # How to rewrite your service in Rust
 
 ## How to rewrite your service at all
 
-## What happens when you're wrong?
+```dot
+graph {
+  A -> "A'"
+  A -> B
+}
+```
 
-## What happens when you're right?
+Prove: `A' + B = A`
+
 <!--
-OUTLINE
+Your goal here is to show that the decomposition of service A into A' + B has the same interface and the same side
+effects as service A.
 
-* given you want to migrate service A to service A' + service B, how do you know that service A' + service B = service A?
-  * if you're EXTREMELY LUCKY -- the interfaces between service A and everything that talks to service A will make it obvious
-    what you need to care about
-  * you are not extremely lucky
-  * two examples: `ground-comms`, missing downlinks V2 from scheduling -> processing; processing sending two messages
-    _fast_ when the scheduling service was counting on it sending the two messages with a longer gap
-    * first example -- giant object, not obvious which part is important where, message serving like a million purposes
-    * second example -- again a giant object where processing workflow told scheduling "object x should have state y,"
-      which was fine while the second message for a specific piece of object x (missing pulses) wasn't getting
-      processed at the same time
-  * YOU WILL BE WRONG. when you're wrong, someone is likely to get paged. if you're lucky, it will be you.
-  * you are not extremely lucky. (sorry Eugene)
-* you have to know what service B's responsibilities are
-* which means you have to know what service A's responsibilities are
-* which means... uh-oh, now you have a design documentation problem
-* design documentation is hard, "we should rewrite it in Rust" is easy
-
-* challenge 1: _interface_ you want to migrate to service B
-* challenge 2: _effects_ you want to migrate to service B
-* challenge 3: _dependencies_ of service A on service B
-* challenge 4: not doing it solo
-
-* but wait: Rust has nothing to do with this, this is all part of a challenge for any service migration. you got it!
+Steps:
+* write down all the side-effects that you're migrating
+* write down the interface that you're migrating
+* Example: Let Mentat Cook; migration / rewrite of downlink scheduling in `mentat-feasibility`
+  * side-effects documented in "Summary of Proposal" in ADR
+  * lucky, we thought: no public interface
 -->
+
+## You will be wrong
+
+* Sometimes _really wrong_
+
+<!--
+* if the interfaces and side-effects were easy to write down, you probably wouldn't be excited to migrate whatever
+  you're migrating to begin with.
+* you have a design documentation problem coming in, and a different design documentation problem coming out.
+* if you're very lucky and the world is just, when you're wrong, it will be your problem.
+* if you're unlucky, when you're wrong, Eugene will get paged.
+* Let Mentat Cook / 07 anomaly mitigation had the same issue -- part of the interface of downlink planning is an
+  otherwise non-noteworthy comm message that gets sent after passes end, and also part of the internal interface is
+  _time_ in a kinda confusing way.
+-->
+
+## Eventually you'll be right
+
+* someday you will exercise all the edges you couldn't write down, then you win
+
+<!--
+* at this point, it's really exciting -- you've done the thing, and whatever benefits you predicted when you planned
+  to migrate the thing should be coming in.
+* now you can get back to normal SWE problems, which are still hard.
+* there's no magic here, you still just have to try to do a really good job, so learn some stuff, do your best,
+  and work through the built-in challenges of operating services
+-->
+
+# You're still you, you just write Rust now.

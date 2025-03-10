@@ -13,6 +13,7 @@
           buildInputs = with pkgs; [
             bat
             entr
+            graph-easy
             haskellPackages.patat
           ];
         };
