@@ -366,7 +366,7 @@ effects as service A.
 Steps:
 * write down all the side-effects that you're migrating
 * write down the interface that you're migrating
-* Example: Let Mentat Cook; migration / rewrite of downlink scheduling in `mentat-feasibility`
+* Example: migration / rewrite of downlink scheduling
   * side-effects documented in "Summary of Proposal" in ADR
   * lucky, we thought: no public interface
 -->
